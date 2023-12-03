@@ -10,6 +10,8 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -38,9 +40,11 @@ import javax.swing.JTextField;
 import javax.swing.JMenu;
 import javax.swing.JPopupMenu;
 import java.awt.Component;
+import java.awt.Desktop;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JList;
 import javax.swing.JButton;
 import javax.swing.JScrollPane;
@@ -433,7 +437,11 @@ public class LocationPanel extends JPanel {
 		btnImprimer.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				if (!checkFields()) {
-					System.out.println("empty");
+					int choice = JOptionPane.showConfirmDialog(
+			                null,
+			                "Des champs nécessaires sont vides.",
+			                "Empty fields",
+			                JOptionPane.DEFAULT_OPTION);
 				}
 				else {
 					try {
@@ -592,6 +600,10 @@ public class LocationPanel extends JPanel {
 		outfile.getParentFile().mkdirs();
 		doc.write(new FileOutputStream(outfile));
 		
+		String outputPath = System.getProperty("user.dir")+"/src";
+		//gotoPATH
+		gotoPath(outputPath);
+		
 		return;
 	}
 	
@@ -638,6 +650,16 @@ public class LocationPanel extends JPanel {
 		
 		return;
 	}
+	
+	//GO TO SPECIFIED PATH
+		public void gotoPath(String path) throws IOException {
+			File file = new File(path);
+			if (!file.exists()) {
+				Files.createDirectories(Paths.get(path));
+			}
+			Desktop.getDesktop().open(file);
+			
+		}
 	
 	private void saveContrat() {
 		

@@ -12,7 +12,6 @@ public class Contrat {
 
 	
 	public Contrat(Voiture voiture, Client client, String datePrise, int duree, String heurePrise, String dateRemise) {
-		numContrat = 1;
 		this.voiture = voiture;
 		this.client = client;
 		

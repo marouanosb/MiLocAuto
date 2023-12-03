@@ -25,6 +25,9 @@ import interfaces.ReservationPanel;
 import interfaces.RemisePanel;
 import java.awt.Font;
 
+import database.DatabaseCreation;
+import database.DatabaseService;
+
 public class MainWindow {
 
 	private JFrame frame;
@@ -38,6 +41,9 @@ public class MainWindow {
 				try {
 					MainWindow window = new MainWindow();
 					window.frame.setVisible(true);
+					
+					//init database
+					DatabaseCreation.createDB();
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
