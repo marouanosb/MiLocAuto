@@ -2,6 +2,9 @@ package interfaces;
 
 import java.awt.EventQueue;
 import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.sql.SQLException;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -11,6 +14,9 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
+
+import database.DatabaseService;
+import models.Voiture;
 
 public class AjouterVoitureWindow extends JFrame {
 
@@ -138,6 +144,26 @@ public class AjouterVoitureWindow extends JFrame {
 		JButton btnConfirmer = new JButton("CONFIRMER");
 		btnConfirmer.setBounds(21, 16, 100, 30);
 		ajouterVoiturePanel.add(btnConfirmer);
+		btnConfirmer.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				Voiture v = new Voiture(idVoitureEdit.getText(),
+										typeEdit.getText(),
+										classeEdit.getText(),
+										numEnregistrementEdit.getText(),
+										Integer.parseInt(metrageEdit.getText()),
+										Integer.parseInt(prixEdit.getText()),
+										marqueEdit.getText(),
+										immatriculationEdit.getText(),
+										Integer.parseInt(metragePrecisEdit.getText()),
+										"Disponible");
+				try {
+					DatabaseService.insertVoiture(v);
+				} catch (ClassNotFoundException | SQLException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+			}
+		});
 		
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));

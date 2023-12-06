@@ -22,9 +22,23 @@ public class Voiture {
 		this.marque = marque;
 		this.immatriculation = immatriculation;
 		this.metragePrecis = metragePrecis;
-		this.etat = "Disponible";
+		this.etat = etat;
 	}
 	
+	/*public Voiture(String id, String type, String classe, String numEnregistrement, int metrage, int prix, String marque, String immatriculation, int metragePrecis) {
+		this.id = id;
+		this.type = type;
+		this.classe = classe;
+		this.numEnregistrement = numEnregistrement;
+		this.metrage = metrage;
+		this.prix = prix;
+		this.marque = marque;
+		this.immatriculation = immatriculation;
+		this.metragePrecis = metragePrecis;
+		this.etat = "Disponible";
+		
+	}
+	*/
 	
 	public String getType() {
 		return type;

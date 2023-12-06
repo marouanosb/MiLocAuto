@@ -5,28 +5,35 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.table.DefaultTableModel;
+
+import database.DatabaseService;
+
 import java.awt.event.ActionListener;
+import java.sql.SQLException;
+import java.util.ArrayList;
 import java.awt.event.ActionEvent;
+
+import models.*;
 
 public class VoituresPanel extends JPanel {
 	
-	private JTable voituresTable;
+	private JTable voituresTable = new JTable();;
 	private JTextField searchEdit;
 	private Integer selectedRow = null;
+	private ArrayList<Voiture> voitures;
 		
-	public VoituresPanel() {
+	public VoituresPanel() throws ClassNotFoundException, SQLException {
 		setLayout(null);
-		
 		JPanel panel = new JPanel();
 		panel.setBounds(0, 0, 768, 768);
 		add(panel);
 		panel.setLayout(null);
-
-		String data[][]={ {"S1","RENAULT","AAAAA","XXXX","loué"},    
-                {"S2","RENAULT","BBBBBB","YYYY","loué"},    
-                {"S3","RENAULT","CCCCC","ZZZZ","loué"}};   
-		String columns[]= {"IDENTIFIANT","TYPE","MARQUE","CLASSE","ETAT"};
-		voituresTable = new JTable(data,columns);
+ 
+		String columns[]= {"ID","TYPE","MARQUE","CLASSE","ETAT"};
+		DefaultTableModel dtm = new DefaultTableModel(0, 0);
+		dtm.setColumnIdentifiers(columns);
+		voituresTable.setModel(dtm);
 		voituresTable.setBounds(10, 75, 748, 500);
 		JScrollPane scrollPane= new JScrollPane(voituresTable);    
 		scrollPane.setLocation(10, 75);
@@ -34,11 +41,13 @@ public class VoituresPanel extends JPanel {
 		panel.add(scrollPane);
 		scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
 		
+		getVoitures();
+		showTable(voitures);
+		
 		voituresTable.addMouseListener(new java.awt.event.MouseAdapter() {
 		    @Override
 		    public void mouseClicked(java.awt.event.MouseEvent evt) {
 		        selectedRow = voituresTable.rowAtPoint(evt.getPoint());
-		        System.out.println((String) voituresTable.getValueAt(selectedRow,0));
 		    }
 		});
 		voituresTable.setDefaultEditor(Object.class, null);
@@ -77,14 +86,40 @@ public class VoituresPanel extends JPanel {
 		btnSupprimer.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				if(selectedRow != null) {
-					
+					String selectedId = (String) voituresTable.getValueAt(selectedRow,0);
+					try {
+						DatabaseService.deleteVoiture(selectedId);
+						getVoitures();
+						showTable(voitures);
+					} catch (ClassNotFoundException | SQLException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
 				}
-				else System.out.println("Selectionnez d'abord.");
 				
 			}
 		});
 		btnSupprimer.setBounds(240, 586, 100, 30);
 		panel.add(btnSupprimer);
-		
+	}
+	
+	private void showTable(ArrayList<Voiture> voitures){
+		resetTable(voituresTable);
+		for (Voiture v : voitures) {
+			String[] row = {v.getId(),
+					v.getType(),
+					v.getMarque(),
+					v.getClasse(),
+					v.getEtat()};
+			((DefaultTableModel) voituresTable.getModel()).addRow(row);
+		}
+	}
+	
+	private void resetTable(JTable table) {
+		((DefaultTableModel) table.getModel()).setRowCount(0);
+	}
+	
+	public void getVoitures() throws ClassNotFoundException, SQLException {
+		voitures = DatabaseService.getAllVoitures();
 	}
 }

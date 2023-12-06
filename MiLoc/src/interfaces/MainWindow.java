@@ -16,6 +16,7 @@ import java.awt.GridLayout;
 import javax.swing.JSplitPane;
 import javax.swing.BoxLayout;
 import java.awt.event.ActionListener;
+import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.awt.event.ActionEvent;
@@ -53,15 +54,19 @@ public class MainWindow {
 
 	/**
 	 * Create the application.
+	 * @throws SQLException 
+	 * @throws ClassNotFoundException 
 	 */
-	public MainWindow() {
+	public MainWindow() throws ClassNotFoundException, SQLException {
 		initialize();
 	}
 
 	/**
 	 * Initialize the contents of the frame.
+	 * @throws SQLException 
+	 * @throws ClassNotFoundException 
 	 */
-	private void initialize() {
+	private void initialize() throws ClassNotFoundException, SQLException {
 		frame = new JFrame();
 		frame.setBounds(0, 0, 1024, 768);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -118,14 +123,23 @@ public class MainWindow {
 		btnRemise.setSize(150,50);
 		buttonsPanel.add(btnRemise);
 		
-		final VoituresPanel voituresPanel = new VoituresPanel();
+		
 		
 		JButton btnVoitures = new JButton("VOITURES");
 		btnVoitures.setFont(new Font("Tahoma", Font.PLAIN, 16));
 		btnVoitures.setBounds(0, 163, 150, 50);
 		btnVoitures.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				splitPane.setRightComponent(voituresPanel);
+				VoituresPanel voituresPanel;
+				try {
+					voituresPanel = new VoituresPanel();
+					splitPane.setRightComponent(voituresPanel);
+				} catch (ClassNotFoundException | SQLException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+				
+				
 			}
 		});
 		buttonsPanel.add(btnVoitures);

@@ -8,6 +8,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.table.DefaultTableModel;
 
 public class ClientsPanel extends JPanel {
 
@@ -22,12 +23,12 @@ public class ClientsPanel extends JPanel {
 		panel.setBounds(0, 0, 768, 768);
 		add(panel);
 		panel.setLayout(null);
-
-		String data[][]={ {"Amit","670000","101"},    
-                {"Jai","780000","102"},    
-                {"Sachin","700000","103"}};      
-		String columns[]= {"NOM","TELEPHONE","PERMIS",};
-		clientsTable = new JTable(data,columns);
+   
+		String columns[]= {"NOM","TELEPHONE","PERMIS"};
+		DefaultTableModel dtm = new DefaultTableModel(0, 0);
+		dtm.setColumnIdentifiers(columns);
+		clientsTable = new JTable();
+		clientsTable.setModel(dtm);
 		clientsTable.setBounds(10, 75, 748, 500);
 		JScrollPane scrollPane= new JScrollPane(clientsTable);    
 		scrollPane.setLocation(10, 75);

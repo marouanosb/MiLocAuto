@@ -21,6 +21,7 @@ import javax.swing.JLabel;
 import javax.swing.SwingConstants;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.table.DefaultTableModel;
 
 import java.awt.Font;
 import javax.swing.JTable;
@@ -47,11 +48,12 @@ public class RemisePanel extends JPanel {
 		add(panel);
 		panel.setLayout(null);
 
-		String data[][]={ {"101","Amit","670000"},    
-                {"102","Jai","780000"},    
-                {"101","Sachin","700000"}};   
-		String columns[]= {"CONTRAT N°","ِCLIENT","VOITURE"};
-		contratTable = new JTable(data,columns);
+
+		String columns[]= {"CONTRAT N°","ِCLIENT","VOITURE", "DATE PRISE"};
+		DefaultTableModel dtm = new DefaultTableModel(0, 0);
+		dtm.setColumnIdentifiers(columns);
+		contratTable = new JTable();
+		contratTable.setModel(dtm);
 		contratTable.setBounds(10, 75, 748, 500);
 		JScrollPane scrollPane= new JScrollPane(contratTable);    
 		scrollPane.setLocation(10, 75);
