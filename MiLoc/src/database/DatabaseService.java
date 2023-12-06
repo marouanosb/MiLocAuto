@@ -19,6 +19,7 @@ public class DatabaseService {
 
             // Create a connection to the database
             connection = DriverManager.getConnection("jdbc:sqlite:database/bdd.db");
+            
 
     }
 
@@ -58,6 +59,7 @@ public class DatabaseService {
 				+ "dateRemise TEXT)";
         ps = connection.prepareStatement(query);
         ps.execute();
+        connection.close();
     }
     
     public static void insertVoiture(Voiture v) throws ClassNotFoundException, SQLException {
@@ -76,6 +78,7 @@ public class DatabaseService {
     	ps.setString(10, v.getEtat());
     	
     	ps.execute();  	
+    	connection.close();
     }
     
     public static void insertClient(Client c) throws ClassNotFoundException, SQLException {
@@ -91,7 +94,8 @@ public class DatabaseService {
     	ps.setString(7, c.getDatePermis());
     	ps.setString(8, c.getLieuPermis());
     	
-    	ps.execute();  	
+    	ps.execute();  
+    	connection.close();
     }
     
     public static void insertContrat(Contrat c) throws ClassNotFoundException, SQLException {
@@ -106,6 +110,7 @@ public class DatabaseService {
     	ps.setString(7, c.getDateRemise());
     	
     	ps.execute();  	
+    	connection.close();
     }
     
     public static ArrayList<Voiture> getAllVoitures() throws ClassNotFoundException, SQLException{
@@ -127,7 +132,9 @@ public class DatabaseService {
     								rs.getString("etat"));
     		voitures.add(v);
     	}
+    	connection.close();
     	return voitures;
+    	
     }
     
     public static ArrayList<Client> getAllClients() throws ClassNotFoundException, SQLException{
@@ -147,6 +154,7 @@ public class DatabaseService {
     								rs.getString("lieuPermis"));
     		clients.add(c);
     	}
+    	connection.close();
     	return clients;
     }
     
@@ -166,13 +174,15 @@ public class DatabaseService {
     		c.setNumContrat(rs.getInt("numContrat"));
     		contrats.add(c);
     	}
+    	connection.close();
     	return contrats;
     }
     
     public static Client getClient(String nom) throws ClassNotFoundException, SQLException{
     	connectDB();
-    	String query = "SELECT * FROM voitures WHERE  nom = "+nom;
+    	String query = "SELECT * FROM clients WHERE  nom = ?";
     	PreparedStatement ps = connection.prepareStatement(query);
+    	ps.setString(1, nom);
     	ResultSet rs = ps.executeQuery();
     	rs.next();
     	Client c = new Client (rs.getString("nom"),
@@ -183,6 +193,7 @@ public class DatabaseService {
 				rs.getString("permis"),
 				rs.getString("datePermis"),
 				rs.getString("lieuPermis"));
+    	connection.close();
     	return c;
     }
     
@@ -203,6 +214,7 @@ public class DatabaseService {
 				rs.getString("immatriculation"),
 				rs.getInt("metragePrecis"),
 				rs.getString("etat"));
+    	connection.close();
     	return v;
     }
     
@@ -212,8 +224,80 @@ public class DatabaseService {
     	PreparedStatement ps = connection.prepareStatement(query);
     	ps.setString(1, id);
     	ps.executeUpdate();    	
-    	
+    	connection.close();
     	System.out.println("Deleted successfully.");
     }
+    
+
+	public static void deleteClient(String nom) throws ClassNotFoundException, SQLException {
+		connectDB();
+    	String query = "DELETE FROM clients WHERE nom = ?";
+    	PreparedStatement ps = connection.prepareStatement(query);
+    	ps.setString(1, nom);
+    	ps.executeUpdate();    	
+    	connection.close();
+    	System.out.println("Deleted successfully.");
+		
+	}
+
+	public static void updateVoiture(String id, Voiture v) throws ClassNotFoundException, SQLException {
+		connectDB();
+		String query = "UPDATE voitures SET "
+				+"id = ?,"
+				+ "type = ?,"
+				+ "classe = ?,"
+				+ "numEnregistrement = ?,"
+				+ "metrage = ?,"
+				+ "prix = ?,"
+				+ "marque = ?,"
+				+ "immatriculation = ?,"
+				+ "metragePrecis = ?,"
+				+ "etat = ? "
+				+ "WHERE id = ?";
+		PreparedStatement ps = connection.prepareStatement(query);
+		ps.setString(1, v.getId());
+		ps.setString(2, v.getType());
+		ps.setString(3, v.getClasse());
+		ps.setString(4, v.getNumEnregistrement());
+		ps.setInt(5, v.getMetrage());
+		ps.setInt(6, v.getPrix());
+		ps.setString(7, v.getMarque());
+		ps.setString(8, v.getImmatriculation());
+		ps.setInt(9, v.getMetragePrecis());
+		ps.setString(10, v.getEtat());
+		ps.setString(11, id);
+		
+		ps.execute();
+		connection.close();
+	}
+
+	public static void updateClient(String nom, Client c) throws SQLException, ClassNotFoundException {
+		connectDB();
+		String query = "UPDATE clients SET "
+			    + "nom = ?, "
+			    + "dateNaissance = ?, "
+			    + "adresse = ?, "
+			    + "phone = ?, "
+			    + "lieuNaissance = ?, "
+			    + "permis = ?, "
+			    + "datePermis = ?, "
+			    + "lieuPermis = ? "
+			    + "WHERE nom = ?";
+		PreparedStatement ps = connection.prepareStatement(query);
+		ps.setString(1, c.getNom());
+		ps.setString(2, c.getDateNaissance());
+		ps.setString(3, c.getAdresse());
+		ps.setString(4, c.getPhone());
+		ps.setString(5, c.getLieuNaissance());
+		ps.setString(6, c.getPermis());
+		ps.setString(7, c.getDatePermis());
+		ps.setString(8, c.getLieuPermis());
+		ps.setString(9, nom);
+		
+		ps.execute();
+		connection.close();
+		
+	}
+
 }
 	

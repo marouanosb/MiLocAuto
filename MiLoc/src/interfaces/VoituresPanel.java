@@ -41,7 +41,7 @@ public class VoituresPanel extends JPanel {
 		panel.add(scrollPane);
 		scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
 		
-		getVoitures();
+		getAllVoitures();
 		showTable(voitures);
 		
 		voituresTable.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -60,11 +60,13 @@ public class VoituresPanel extends JPanel {
 		panel.add(searchEdit);
 		searchEdit.setColumns(10);
 		
+		VoituresPanel vpanel = this;
+		
 		JButton btnAjouter = new JButton("AJOUTER");
 		btnAjouter.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				try {
-					new AjouterVoitureWindow(null).setVisible(true);
+					new AjouterVoitureWindow(null, vpanel).setVisible(true);
 				} catch (ClassNotFoundException | SQLException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
@@ -80,7 +82,7 @@ public class VoituresPanel extends JPanel {
 				if(selectedRow != null) {
 					String selectedId = (String) voituresTable.getValueAt(selectedRow,0);
 					try {
-						new AjouterVoitureWindow(selectedId).setVisible(true);
+						new AjouterVoitureWindow(selectedId, vpanel).setVisible(true);
 					} catch (ClassNotFoundException | SQLException e1) {
 						// TODO Auto-generated catch block
 						e1.printStackTrace();
@@ -100,7 +102,7 @@ public class VoituresPanel extends JPanel {
 					String selectedId = (String) voituresTable.getValueAt(selectedRow,0);
 					try {
 						DatabaseService.deleteVoiture(selectedId);
-						getVoitures();
+						getAllVoitures();
 						selectedRow = null;
 						showTable(voitures);
 					} catch (ClassNotFoundException | SQLException e1) {
@@ -115,7 +117,7 @@ public class VoituresPanel extends JPanel {
 		panel.add(btnSupprimer);
 	}
 	
-	private void showTable(ArrayList<Voiture> voitures){
+	void showTable(ArrayList<Voiture> voitures){
 		resetTable(voituresTable);
 		for (Voiture v : voitures) {
 			String[] row = {v.getId(),
@@ -131,7 +133,9 @@ public class VoituresPanel extends JPanel {
 		((DefaultTableModel) table.getModel()).setRowCount(0);
 	}
 	
-	public void getVoitures() throws ClassNotFoundException, SQLException {
+	public ArrayList<Voiture> getAllVoitures() throws ClassNotFoundException, SQLException {
 		voitures = DatabaseService.getAllVoitures();
+		
+		return voitures;
 	}
 }

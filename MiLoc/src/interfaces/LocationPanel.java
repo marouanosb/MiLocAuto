@@ -432,7 +432,6 @@ public class LocationPanel extends JPanel {
 		locationPanel.add(lieuPermisEdit);
 		
 		
-		
 		JButton btnImprimer = new JButton("IMPRIMER");
 		btnImprimer.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {

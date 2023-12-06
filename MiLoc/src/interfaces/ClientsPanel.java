@@ -2,6 +2,8 @@ package interfaces;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.SQLException;
+import java.util.ArrayList;
 
 import javax.swing.JButton;
 import javax.swing.JPanel;
@@ -10,13 +12,18 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
 
+import database.DatabaseService;
+import models.Client;
+import models.Voiture;
+
 public class ClientsPanel extends JPanel {
 
 	private JTable clientsTable;
 	private JTextField searchEdit;
 	private Integer selectedRow = null;
+	private ArrayList<Client> clients;
 		
-	public ClientsPanel() {
+	public ClientsPanel() throws ClassNotFoundException, SQLException {
 		setLayout(null);
 		
 		JPanel panel = new JPanel();
@@ -40,10 +47,13 @@ public class ClientsPanel extends JPanel {
 		    @Override
 		    public void mouseClicked(java.awt.event.MouseEvent evt) {
 		        selectedRow = clientsTable.rowAtPoint(evt.getPoint());
-		        System.out.println((String) clientsTable.getValueAt(selectedRow,0));
+		        
 		    }
 		});
 		clientsTable.setDefaultEditor(Object.class, null);
+		
+		getAllClients();
+		showTable(clients);
         
 		
 		searchEdit = new JTextField();
@@ -53,20 +63,32 @@ public class ClientsPanel extends JPanel {
 		panel.add(searchEdit);
 		searchEdit.setColumns(10);
 		
+		ClientsPanel cpanel = this;
+		
 		JButton btnAjouter = new JButton("AJOUTER");
 		btnAjouter.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				new AjouterClientWindow().setVisible(true);
+				try {
+					new AjouterClientWindow(null, cpanel).setVisible(true);
+				} catch (ClassNotFoundException | SQLException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
 			}
 		});
 		btnAjouter.setBounds(20, 586, 100, 30);
 		panel.add(btnAjouter);
-		
 		JButton btnModifier = new JButton("MODIFIER");
 		btnModifier.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				if(selectedRow != null) {
-					new AjouterClientWindow().setVisible(true);
+					String selectedNom = (String) clientsTable.getValueAt(selectedRow,0);
+					try {
+						new AjouterClientWindow(selectedNom, cpanel).setVisible(true);
+					} catch (ClassNotFoundException | SQLException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
 				}
 				else System.out.println("Selectionnez d'abord.");
 				
@@ -79,7 +101,16 @@ public class ClientsPanel extends JPanel {
 		btnSupprimer.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				if(selectedRow != null) {
-					
+					String selectedNom = (String) clientsTable.getValueAt(selectedRow,0);
+					try {
+						DatabaseService.deleteClient(selectedNom);
+						getAllClients();
+						selectedRow = null;
+						showTable(clients);
+					} catch (ClassNotFoundException | SQLException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
 				}
 				else System.out.println("Selectionnez d'abord.");
 				
@@ -88,6 +119,28 @@ public class ClientsPanel extends JPanel {
 		btnSupprimer.setBounds(240, 586, 100, 30);
 		panel.add(btnSupprimer);
 		
+		
+		
+	}
+	
+	void showTable(ArrayList<Client> clients){
+		resetTable(clientsTable);
+		for (Client c : clients) {
+			String[] row = {c.getNom(),
+					c.getPhone(),
+					c.getPermis()};
+			((DefaultTableModel) clientsTable.getModel()).addRow(row);
+		}
+	}
+	
+	private void resetTable(JTable table) {
+		((DefaultTableModel) table.getModel()).setRowCount(0);
+	}
+	
+	public ArrayList<Client> getAllClients() throws ClassNotFoundException, SQLException {
+		clients = DatabaseService.getAllClients();
+		
+		return clients;
 	}
 
 }

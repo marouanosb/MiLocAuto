@@ -32,7 +32,7 @@ public class AjouterVoitureWindow extends JFrame {
 	private JTextField idVoitureEdit;
 
 	
-	public AjouterVoitureWindow(String id) throws ClassNotFoundException, SQLException {
+	public AjouterVoitureWindow(String id, VoituresPanel vpanel) throws ClassNotFoundException, SQLException {
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setBounds(100, 100, 768, 400);
 		
@@ -159,7 +159,10 @@ public class AjouterVoitureWindow extends JFrame {
 										Integer.parseInt(metragePrecisEdit.getText()),
 										"Disponible");
 				try {
-					DatabaseService.insertVoiture(v);
+					if(id == null) DatabaseService.insertVoiture(v);
+					else DatabaseService.updateVoiture(id,v);
+					
+					vpanel.showTable(vpanel.getAllVoitures());
 				} catch (ClassNotFoundException | SQLException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();

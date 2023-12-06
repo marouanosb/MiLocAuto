@@ -2,6 +2,7 @@ package interfaces;
 
 import java.awt.EventQueue;
 import java.awt.Font;
+import java.sql.SQLException;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -10,6 +11,12 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
+
+import database.DatabaseService;
+import models.Client;
+import models.Voiture;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 
 public class AjouterClientWindow extends JFrame {
 
@@ -24,7 +31,7 @@ public class AjouterClientWindow extends JFrame {
 	private JTextField lieuPermisEdit;
 
 	
-	public AjouterClientWindow() {
+	public AjouterClientWindow(String nom, ClientsPanel cpanel) throws ClassNotFoundException, SQLException {
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setBounds(100, 100, 768, 400);
 		
@@ -124,6 +131,28 @@ public class AjouterClientWindow extends JFrame {
 		
 		
 		JButton btnConfirmer = new JButton("CONFIRMER");
+		btnConfirmer.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				Client c  = new Client(nomEdit.getText(),
+						dateNaissanceEdit.getText(),
+						adresseEdit.getText(),
+						phoneEdit.getText(),
+						lieuNaissanceEdit.getText(),
+						permisEdit.getText(),
+						datePermisEdit.getText(),
+						lieuPermisEdit.getText());
+				try {
+					if(nom == null) DatabaseService.insertClient(c);
+					else DatabaseService.updateClient(nom,c);
+						
+					cpanel.showTable(cpanel.getAllClients());
+				} catch (ClassNotFoundException | SQLException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+			}
+		});
+		
 		btnConfirmer.setBounds(21, 16, 100, 30);
 		ajouterClientPanel.add(btnConfirmer);
 		
@@ -131,5 +160,30 @@ public class AjouterClientWindow extends JFrame {
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(ajouterClientPanel);
+		
+		
+		//Fill data
+		if(nom != null) {
+			showClient(getClient(nom));
+		}
+}
+	
+	private Client getClient(String nom) throws ClassNotFoundException, SQLException {
+		Client c = DatabaseService.getClient(nom);
+		
+		return c;
+	}
+	
+	private void showClient(Client c) {
+		nomEdit.setText(c.getNom());
+		dateNaissanceEdit.setText(c.getDateNaissance());
+		lieuNaissanceEdit.setText(c.getLieuNaissance());
+		phoneEdit.setText(c.getPhone());
+		permisEdit.setText(c.getPermis());
+		datePermisEdit.setText(c.getDatePermis());
+		lieuPermisEdit.setText(c.getLieuPermis());
+		adresseEdit.setText(c.getAdresse());
+		
 	}
 }
+
