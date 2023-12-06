@@ -63,7 +63,12 @@ public class VoituresPanel extends JPanel {
 		JButton btnAjouter = new JButton("AJOUTER");
 		btnAjouter.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				new AjouterVoitureWindow().setVisible(true);
+				try {
+					new AjouterVoitureWindow(null).setVisible(true);
+				} catch (ClassNotFoundException | SQLException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
 			}
 		});
 		btnAjouter.setBounds(20, 586, 100, 30);
@@ -73,7 +78,13 @@ public class VoituresPanel extends JPanel {
 		btnModifier.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				if(selectedRow != null) {
-					new AjouterVoitureWindow().setVisible(true);
+					String selectedId = (String) voituresTable.getValueAt(selectedRow,0);
+					try {
+						new AjouterVoitureWindow(selectedId).setVisible(true);
+					} catch (ClassNotFoundException | SQLException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
 				}
 				else System.out.println("Selectionnez d'abord.");
 				
@@ -90,6 +101,7 @@ public class VoituresPanel extends JPanel {
 					try {
 						DatabaseService.deleteVoiture(selectedId);
 						getVoitures();
+						selectedRow = null;
 						showTable(voitures);
 					} catch (ClassNotFoundException | SQLException e1) {
 						// TODO Auto-generated catch block

@@ -188,8 +188,9 @@ public class DatabaseService {
     
     public static Voiture getVoiture(String id) throws ClassNotFoundException, SQLException{
     	connectDB();
-    	String query = "SELECT * FROM voitures WHERE  id = "+id;
+    	String query = "SELECT * FROM voitures WHERE  id = ?";
     	PreparedStatement ps = connection.prepareStatement(query);
+    	ps.setString(1, id);
     	ResultSet rs = ps.executeQuery();
     	rs.next();
     	Voiture v = new Voiture (rs.getString("id"),

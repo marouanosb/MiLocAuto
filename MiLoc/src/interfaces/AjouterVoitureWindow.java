@@ -32,11 +32,13 @@ public class AjouterVoitureWindow extends JFrame {
 	private JTextField idVoitureEdit;
 
 	
-	public AjouterVoitureWindow() {
+	public AjouterVoitureWindow(String id) throws ClassNotFoundException, SQLException {
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setBounds(100, 100, 768, 400);
 		
 		getContentPane().setLayout(null);
+		
+		
 		
 		JPanel ajouterVoiturePanel = new JPanel();
 		ajouterVoiturePanel.setBounds(10, 10, 768, 400);
@@ -168,5 +170,29 @@ public class AjouterVoitureWindow extends JFrame {
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(ajouterVoiturePanel);
+		
+		//Fill data
+		if(id != null) {
+			showVoiture(getVoiture(id));
+		}
+	}
+	
+	private Voiture getVoiture(String id) throws ClassNotFoundException, SQLException {
+		Voiture v = DatabaseService.getVoiture(id);
+		
+		return v;
+	}
+	
+	private void showVoiture(Voiture v) {
+		idVoitureEdit.setText(v.getId());
+		typeEdit.setText(v.getType());
+		classeEdit.setText(v.getClasse());
+		marqueEdit.setText(v.getMarque());
+		numEnregistrementEdit.setText(v.getNumEnregistrement());
+		immatriculationEdit.setText(v.getImmatriculation());
+		prixEdit.setText(Integer.toString(v.getPrix()));
+		metrageEdit.setText(Integer.toString(v.getMetrage()));
+		metragePrecisEdit.setText(Integer.toString(v.getMetragePrecis()));
+		
 	}
 }
