@@ -86,7 +86,7 @@ public class MainWindow {
 		
 		JButton btnLocation = new JButton("LOCATION");
 		btnLocation.setFont(new Font("Tahoma", Font.PLAIN, 16));
-		btnLocation.setLocation(0, 1);
+		btnLocation.setLocation(0, 11);
 		btnLocation.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				locationPanel.setHeurePrise();
@@ -101,7 +101,7 @@ public class MainWindow {
 		
 		JButton btnReservation = new JButton("RESERVATION");
 		btnReservation.setFont(new Font("Tahoma", Font.PLAIN, 16));
-		btnReservation.setLocation(0, 55);
+		btnReservation.setLocation(0, 66);
 		btnReservation.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				splitPane.setRightComponent(reservationPanel);
@@ -114,7 +114,7 @@ public class MainWindow {
 		
 		JButton btnRemise = new JButton("REMISE");
 		btnRemise.setFont(new Font("Tahoma", Font.PLAIN, 16));
-		btnRemise.setLocation(0, 109);
+		btnRemise.setLocation(0, 121);
 		btnRemise.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				splitPane.setRightComponent(remisePanel);
@@ -127,7 +127,7 @@ public class MainWindow {
 		
 		JButton btnVoitures = new JButton("VOITURES");
 		btnVoitures.setFont(new Font("Tahoma", Font.PLAIN, 16));
-		btnVoitures.setBounds(0, 163, 150, 50);
+		btnVoitures.setBounds(0, 176, 150, 50);
 		btnVoitures.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				VoituresPanel voituresPanel;
@@ -153,14 +153,14 @@ public class MainWindow {
 				splitPane.setRightComponent(alertesPanel);
 			}
 		});
-		btnAlertes.setBounds(0, 273, 150, 50);
+		btnAlertes.setBounds(0, 286, 150, 50);
 		buttonsPanel.add(btnAlertes);
 		
 		final ClientsPanel clientsPanel = new ClientsPanel();
 		
 		JButton btnClients = new JButton("CLIENTS");
 		btnClients.setFont(new Font("Tahoma", Font.PLAIN, 16));
-		btnClients.setBounds(0, 217, 150, 50);
+		btnClients.setBounds(0, 231, 150, 50);
 		btnClients.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				splitPane.setRightComponent(clientsPanel);
@@ -168,8 +168,12 @@ public class MainWindow {
 		});
 		buttonsPanel.add(btnClients);
 		
+		splitPane.setDividerSize(5);
+		splitPane.setEnabled(false);	//disable the function of resizing divider
+		
 		JPanel changingPanel = new JPanel();
 		splitPane.setRightComponent(changingPanel);
 		changingPanel.setLayout(null);
+		
 	}
 }

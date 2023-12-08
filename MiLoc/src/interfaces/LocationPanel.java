@@ -349,8 +349,8 @@ public class LocationPanel extends JPanel {
 		locationPanel.add(phoneEdit);
 		
 		dateNaissanceEdit = new JDateChooser();
-		dateNaissanceEdit.setBounds(458, 441, 178, 30);
 		dateNaissanceEdit.setDateFormatString("dd/MM/yyyy");
+		dateNaissanceEdit.setBounds(458, 441, 178, 30);
 		locationPanel.add(dateNaissanceEdit);
 		
 		lieuNaissanceEdit = new JTextField();

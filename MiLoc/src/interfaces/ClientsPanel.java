@@ -3,6 +3,7 @@ package interfaces;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.SQLException;
+import java.text.ParseException;
 import java.util.ArrayList;
 
 import javax.swing.JButton;
@@ -70,7 +71,7 @@ public class ClientsPanel extends JPanel {
 			public void actionPerformed(ActionEvent e) {
 				try {
 					new AjouterClientWindow(null, cpanel).setVisible(true);
-				} catch (ClassNotFoundException | SQLException e1) {
+				} catch (ClassNotFoundException | SQLException | ParseException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
@@ -85,7 +86,7 @@ public class ClientsPanel extends JPanel {
 					String selectedNom = (String) clientsTable.getValueAt(selectedRow,0);
 					try {
 						new AjouterClientWindow(selectedNom, cpanel).setVisible(true);
-					} catch (ClassNotFoundException | SQLException e1) {
+					} catch (ClassNotFoundException | SQLException | ParseException e1) {
 						// TODO Auto-generated catch block
 						e1.printStackTrace();
 					}

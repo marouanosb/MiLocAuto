@@ -198,4 +198,20 @@ public class AjouterVoitureWindow extends JFrame {
 		metragePrecisEdit.setText(Integer.toString(v.getMetragePrecis()));
 		
 	}
+	
+	private boolean checkFields() {
+		if(
+			idVoitureEdit.getText().equals("") ||
+			typeEdit.getText().equals("") ||
+			classeEdit.getText().equals("") ||
+			numEnregistrementEdit.getText().equals("") ||
+			metrageEdit.getText().equals("") ||
+			prixEdit.getText().equals("") ||
+			marqueEdit.getText().equals("") ||
+			immatriculationEdit.getText().equals("") ||
+			metragePrecisEdit.getText().equals("")
+		) return false;
+	
+		return true;
+	}
 }
