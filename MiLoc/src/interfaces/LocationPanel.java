@@ -4,7 +4,8 @@ import javax.swing.JPanel;
 
 import com.toedter.calendar.*;
 
-
+import database.DatabaseService;
+import models.Voiture;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -12,11 +13,13 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -84,6 +87,7 @@ public class LocationPanel extends JPanel {
 	JDateChooser dateNaissanceEdit;
 	DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
 	Date dateP = null;
+	JComboBox idVoitureMenu;
 	
 	private String type;
 	private String classe;
@@ -106,13 +110,14 @@ public class LocationPanel extends JPanel {
 	private String dateRemise;
 	private String lieuPermis;
 
-	/**
-	 * Create the panel.
-	 */
-	public LocationPanel() {
+	ArrayList<Voiture> voitures = new ArrayList<Voiture>();
+	
+	
+	public LocationPanel() throws ClassNotFoundException, SQLException {
 		setLayout(null);
 		setBounds(10, 10, 800, 853);
 		
+		voitures = DatabaseService.getAllVoitures();
 		
 		JPanel locationPanel = new JPanel();
 		locationPanel.setBounds(10, 10, 768, 768);
@@ -461,20 +466,31 @@ public class LocationPanel extends JPanel {
 		btnImprimer.setBounds(21, 16, 100, 30);
 		locationPanel.add(btnImprimer);
 		
-		
-		String[] choices = {"S1","S2", "S3"};
-		JComboBox idVoitureMenu = new JComboBox(choices);
+		ArrayList<String> choicesList = new ArrayList<>();
+		for(Voiture voiture : voitures) {
+			choicesList.add(voiture.getId());
+		}
+		String[] choices = choicesList.toArray(new String[0]);
+		idVoitureMenu = new JComboBox(choices);
 		idVoitureMenu.setSelectedIndex(-1);
 		idVoitureMenu.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				//fill with selection info
+				if(idVoitureMenu.getSelectedIndex() != -1) {
+					Voiture v = voitures.get(idVoitureMenu.getSelectedIndex());
+					//fill with voiture info
+					typeEdit.setText(v.getType());
+					classeEdit.setText(v.getClasse());
+					marqueEdit.setText(v.getMarque());
+					immatriculationEdit.setText(v.getImmatriculation());
+					numEnregistrementEdit.setText(v.getNumEnregistrement());
+					prixEdit.setText(Integer.toString(v.getPrix()));
+					metrageEdit.setText(Integer.toString(v.getMetrage()));
+					metragePrecisEdit.setText(Integer.toString(v.getMetragePrecis()));
+				}		
 			}
 		});
 		idVoitureMenu.setBounds(500, 77, 83, 22);
 		locationPanel.add(idVoitureMenu);
-		
-		
-		
 		
 		JScrollPane scrollPane = new JScrollPane(locationPanel);
 		
@@ -646,6 +662,7 @@ public class LocationPanel extends JPanel {
 		  datePermisEdit.setCalendar(null);
 		  dateRemiseEdit.setCalendar(null);
 		  dateNaissanceEdit.setCalendar(null);
+		  idVoitureMenu.setSelectedIndex(-1);
 		
 		return;
 	}

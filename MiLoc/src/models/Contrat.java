@@ -9,6 +9,8 @@ public class Contrat {
 	private int duree;
 	private String heurePrise;
 	private String dateRemise;
+	
+	//ADD PASSEPORT N° AND PREMIER PAIMENT HERE AND IN DB
 
 	
 	public Contrat(Voiture voiture, Client client, String datePrise, int duree, String heurePrise, String dateRemise) {
