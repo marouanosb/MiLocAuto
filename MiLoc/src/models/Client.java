@@ -9,8 +9,9 @@ public class Client {
 	private String permis;
 	private String datePermis;
 	private String lieuPermis;
+	private String passeport;
 	
-	public Client(String nom, String dateNaissance, String adresse, String phone, String lieuNaissance, String permis, String datePermis, String lieuPermis) {
+	public Client(String nom, String dateNaissance, String adresse, String phone, String lieuNaissance, String permis, String datePermis, String lieuPermis, String passeport) {
 		this.nom = nom;
 		this.dateNaissance = dateNaissance;
 		this.adresse = adresse;
@@ -19,6 +20,7 @@ public class Client {
 		this.permis = permis;
 		this.datePermis = datePermis;
 		this.lieuPermis = lieuPermis;
+		this.setPasseport(passeport);
 	}
 	
 	public String getNom() {
@@ -68,6 +70,14 @@ public class Client {
 	}
 	public void setLieuPermis(String lieuPermis) {
 		this.lieuPermis = lieuPermis;
+	}
+
+	public String getPasseport() {
+		return passeport;
+	}
+
+	public void setPasseport(String passeport) {
+		this.passeport = passeport;
 	}
 
 }

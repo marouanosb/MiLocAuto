@@ -158,7 +158,8 @@ public class AjouterClientWindow extends JFrame {
 							lieuNaissanceEdit.getText(),
 							permisEdit.getText(),
 							dateFormat.format(datePermisEdit.getDate()),
-							lieuPermisEdit.getText());
+							lieuPermisEdit.getText(),
+							"");
 					try {
 						if(nom == null) DatabaseService.insertClient(c);
 						else DatabaseService.updateClient(nom,c);

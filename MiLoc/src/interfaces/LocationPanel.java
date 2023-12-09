@@ -5,6 +5,7 @@ import javax.swing.JPanel;
 import com.toedter.calendar.*;
 
 import database.DatabaseService;
+import models.Client;
 import models.Voiture;
 
 import java.io.File;
@@ -58,6 +59,8 @@ import javax.swing.JComboBox;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 
 public class LocationPanel extends JPanel {
 	public LocalDateTime now = LocalDateTime.now();
@@ -341,6 +344,19 @@ public class LocationPanel extends JPanel {
 		nomEdit.setBounds(415, 400, 208, 30);
 		locationPanel.add(nomEdit);
 		
+		nomEdit.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyReleased(KeyEvent e) {
+				try {
+					Client c = DatabaseService.getClient(nomEdit.getText());
+					if(c != null) showClient(c);
+				} catch (ClassNotFoundException | SQLException | ParseException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+			}
+		});
+		
 		adresseEdit = new JTextField();
 		adresseEdit.setHorizontalAlignment(SwingConstants.CENTER);
 		adresseEdit.setColumns(10);
@@ -477,15 +493,8 @@ public class LocationPanel extends JPanel {
 			public void actionPerformed(ActionEvent e) {
 				if(idVoitureMenu.getSelectedIndex() != -1) {
 					Voiture v = voitures.get(idVoitureMenu.getSelectedIndex());
-					//fill with voiture info
-					typeEdit.setText(v.getType());
-					classeEdit.setText(v.getClasse());
-					marqueEdit.setText(v.getMarque());
-					immatriculationEdit.setText(v.getImmatriculation());
-					numEnregistrementEdit.setText(v.getNumEnregistrement());
-					prixEdit.setText(Integer.toString(v.getPrix()));
-					metrageEdit.setText(Integer.toString(v.getMetrage()));
-					metragePrecisEdit.setText(Integer.toString(v.getMetragePrecis()));
+					showVoiture(v);
+					
 				}		
 			}
 		});
@@ -668,18 +677,42 @@ public class LocationPanel extends JPanel {
 	}
 	
 	//GO TO SPECIFIED PATH
-		public void gotoPath(String path) throws IOException {
-			File file = new File(path);
-			if (!file.exists()) {
-				Files.createDirectories(Paths.get(path));
-			}
-			Desktop.getDesktop().open(file);
-			
+	public void gotoPath(String path) throws IOException {
+		File file = new File(path);
+		if (!file.exists()) {
+			Files.createDirectories(Paths.get(path));
 		}
+		Desktop.getDesktop().open(file);
+	}
 	
-	private void saveContrat() {
+	private void showVoiture(Voiture v) {
+		//fill with voiture info
+		typeEdit.setText(v.getType());
+		classeEdit.setText(v.getClasse());
+		marqueEdit.setText(v.getMarque());
+		immatriculationEdit.setText(v.getImmatriculation());
+		numEnregistrementEdit.setText(v.getNumEnregistrement());
+		prixEdit.setText(Integer.toString(v.getPrix()));
+		metrageEdit.setText(Integer.toString(v.getMetrage()));
+		metragePrecisEdit.setText(Integer.toString(v.getMetragePrecis()));
+	}
 		
-		
+	private void showClient(Client c) throws ParseException {
+		nomEdit.setText(c.getNom());
+		dateNaissanceEdit.setDate(dateFormat.parse(c.getDateNaissance()));
+		lieuNaissanceEdit.setText(c.getLieuNaissance());
+		phoneEdit.setText(c.getPhone());
+		permisEdit.setText(c.getPermis());
+		datePermisEdit.setDate(dateFormat.parse(c.getDatePermis()));
+		lieuPermisEdit.setText(c.getLieuPermis());
+		adresseEdit.setText(c.getAdresse());
+		passeportEdit.setText(c.getPasseport());
+	}
+	
+	private void insertContrat() {
+		//insert voiture if not exist
+		//insert client if not exist
+		//insert contrat
 		return;
 	}
 }

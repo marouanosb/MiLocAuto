@@ -10,10 +10,10 @@ public class Contrat {
 	private String heurePrise;
 	private String dateRemise;
 	
-	//ADD PASSEPORT N° AND PREMIER PAIMENT HERE AND IN DB
+	private int garantie;
 
 	
-	public Contrat(Voiture voiture, Client client, String datePrise, int duree, String heurePrise, String dateRemise) {
+	public Contrat(Voiture voiture, Client client, String datePrise, int duree, String heurePrise, String dateRemise, int garantie) {
 		this.voiture = voiture;
 		this.client = client;
 		
@@ -21,6 +21,7 @@ public class Contrat {
 		this.setDuree(duree);
 		this.setHeurePrise(heurePrise);
 		this.setDateRemise(dateRemise);
+		this.setGarantie(garantie);
 	}
 	
 	public Voiture getVoiture() {
@@ -72,6 +73,14 @@ public class Contrat {
 
 	public void setDateRemise(String dateRemise) {
 		this.dateRemise = dateRemise;
+	}
+
+	public int getGarantie() {
+		return garantie;
+	}
+
+	public void setGarantie(int garantie) {
+		this.garantie = garantie;
 	}
 	 
 

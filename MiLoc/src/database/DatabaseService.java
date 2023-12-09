@@ -33,7 +33,8 @@ public class DatabaseService {
         					+ "lieuNaissance TEXT,"
         					+ "permis TEXT,"
         					+ "datePermis TEXT,"
-        					+ "lieuPermis TEXT)";
+        					+ "lieuPermis TEXT,"
+        					+ "passeport TEXT)";
         PreparedStatement ps = connection.prepareStatement(query);
         ps.execute();
         query = "CREATE TABLE IF NOT EXISTS voitures("
@@ -56,7 +57,8 @@ public class DatabaseService {
 				+ "datePrise TEXT,"
 				+ "duree INTEGER,"
 				+ "heureRemise TEXT,"
-				+ "dateRemise TEXT)";
+				+ "dateRemise TEXT,"
+				+ "garantie INTEGER)";
         ps = connection.prepareStatement(query);
         ps.execute();
         connection.close();
@@ -83,7 +85,7 @@ public class DatabaseService {
     
     public static void insertClient(Client c) throws ClassNotFoundException, SQLException {
     	connectDB();
-    	String query = "INSERT INTO clients VALUES(?,?,?,?,?,?,?,?)";
+    	String query = "INSERT INTO clients VALUES(?,?,?,?,?,?,?,?,?)";
     	PreparedStatement ps  = connection.prepareStatement(query);
     	ps.setString(1, c.getNom());
     	ps.setString(2, c.getDateNaissance());
@@ -93,6 +95,7 @@ public class DatabaseService {
     	ps.setString(6, c.getPermis());
     	ps.setString(7, c.getDatePermis());
     	ps.setString(8, c.getLieuPermis());
+    	ps.setString(9, c.getPasseport());
     	
     	ps.execute();  
     	connection.close();
@@ -100,7 +103,7 @@ public class DatabaseService {
     
     public static void insertContrat(Contrat c) throws ClassNotFoundException, SQLException {
     	connectDB();
-    	String query = "INSERT INTO contrats VALUES(?,?,?,?,?,?,?)";
+    	String query = "INSERT INTO contrats VALUES(?,?,?,?,?,?,?,?)";
     	PreparedStatement ps  = connection.prepareStatement(query);
     	ps.setString(2, c.getVoiture().getId());
     	ps.setString(3, c.getClient().getNom());
@@ -108,6 +111,7 @@ public class DatabaseService {
     	ps.setInt(5, c.getDuree());
     	ps.setString(6, c.getHeurePrise());
     	ps.setString(7, c.getDateRemise());
+    	ps.setInt(8, c.getGarantie());
     	
     	ps.execute();  	
     	connection.close();
@@ -151,7 +155,8 @@ public class DatabaseService {
     								rs.getString("lieuNaissance"),
     								rs.getString("permis"),
     								rs.getString("datePermis"),
-    								rs.getString("lieuPermis"));
+    								rs.getString("lieuPermis"),
+    								rs.getString("passeport"));
     		clients.add(c);
     	}
     	connection.close();
@@ -170,7 +175,8 @@ public class DatabaseService {
     								rs.getString("datePrise"),
     								rs.getInt("duree"),
     								rs.getString("heureRemise"),
-    								rs.getString("dateRemise"));
+    								rs.getString("dateRemise"),
+    								rs.getInt("garantie"));
     		c.setNumContrat(rs.getInt("numContrat"));
     		contrats.add(c);
     	}
@@ -184,15 +190,18 @@ public class DatabaseService {
     	PreparedStatement ps = connection.prepareStatement(query);
     	ps.setString(1, nom);
     	ResultSet rs = ps.executeQuery();
-    	rs.next();
-    	Client c = new Client (rs.getString("nom"),
-				rs.getString("dateNaissance"),
-				rs.getString("adresse"),
-				rs.getString("phone"),
-				rs.getString("lieuNaissance"),
-				rs.getString("permis"),
-				rs.getString("datePermis"),
-				rs.getString("lieuPermis"));
+    	Client c = null;
+    	if(rs.next()) {
+	    	c = new Client (rs.getString("nom"),
+					rs.getString("dateNaissance"),
+					rs.getString("adresse"),
+					rs.getString("phone"),
+					rs.getString("lieuNaissance"),
+					rs.getString("permis"),
+					rs.getString("datePermis"),
+					rs.getString("lieuPermis"),
+					rs.getString("passeport"));
+    	}
     	connection.close();
     	return c;
     }

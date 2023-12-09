@@ -40,11 +40,12 @@ public class MainWindow {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					MainWindow window = new MainWindow();
-					window.frame.setVisible(true);
-					
 					//init database
 					DatabaseCreation.createDB();
+					
+					
+					MainWindow window = new MainWindow();
+					window.frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
