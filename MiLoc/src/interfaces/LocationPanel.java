@@ -6,6 +6,7 @@ import com.toedter.calendar.*;
 
 import database.DatabaseService;
 import models.Client;
+import models.Contrat;
 import models.Voiture;
 
 import java.io.File;
@@ -455,7 +456,7 @@ public class LocationPanel extends JPanel {
 		
 		JButton btnImprimer = new JButton("IMPRIMER");
 		btnImprimer.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
+			public void actionPerformed(ActionEvent e){
 				if (!checkFields()) {
 					int choice = JOptionPane.showConfirmDialog(
 			                null,
@@ -465,13 +466,8 @@ public class LocationPanel extends JPanel {
 				}
 				else {
 					try {
-						try {
-							imprimer();
-						} catch (InvalidFormatException e1) {
-							// TODO Auto-generated catch block
-							e1.printStackTrace();
-						}
-					} catch (IOException e1) {
+						imprimer();
+					} catch (InvalidFormatException | ClassNotFoundException | IOException | SQLException e1) {
 						// TODO Auto-generated catch block
 						e1.printStackTrace();
 					}
@@ -548,7 +544,9 @@ public class LocationPanel extends JPanel {
 		return true;
 	}
 	
-	private void imprimer() throws IOException, InvalidFormatException {
+	private void imprimer() throws IOException, InvalidFormatException, ClassNotFoundException, SQLException {
+		
+		insertContrat();
 		
 		XWPFDocument doc = new XWPFDocument(OPCPackage.open("./src/milocsample.docx"));
 		for (XWPFParagraph p : doc.getParagraphs()) {
@@ -709,10 +707,52 @@ public class LocationPanel extends JPanel {
 		passeportEdit.setText(c.getPasseport());
 	}
 	
-	private void insertContrat() {
-		//insert voiture if not exist
-		//insert client if not exist
+	private void insertContrat() throws ClassNotFoundException, SQLException {
+		//insert voiture if not exist else pdate
+		Voiture v = new Voiture(immatriculationEdit.getText(),
+				typeEdit.getText(),
+				classeEdit.getText(),
+				numEnregistrementEdit.getText(),
+				Integer.parseInt(metrageEdit.getText()),
+				Integer.parseInt(prixEdit.getText()),
+				marqueEdit.getText(),
+				immatriculationEdit.getText(),
+				Integer.parseInt(metragePrecisEdit.getText()),
+				"Loué");
+		if(idVoitureMenu.getSelectedIndex() == -1) {
+			DatabaseService.insertVoiture(v);
+		}else {
+			Voiture vOriginal = voitures.get(idVoitureMenu.getSelectedIndex());
+			v.setId(vOriginal.getId());
+			DatabaseService.updateVoiture(vOriginal.getId(), v);
+		}
+		
+		//insert client if not exists else update
+		Client cOriginal = DatabaseService.getClient(nomEdit.getText());
+		Client c  = new Client(nomEdit.getText(),
+				dateFormat.format(dateNaissanceEdit.getDate()),
+				adresseEdit.getText(),
+				phoneEdit.getText(),
+				lieuNaissanceEdit.getText(),
+				permisEdit.getText(),
+				dateFormat.format(datePermisEdit.getDate()),
+				lieuPermisEdit.getText(),
+				passeportEdit.getText());
+		if(cOriginal == null) {
+			DatabaseService.insertClient(c);
+		}else {
+			DatabaseService.updateClient(cOriginal.getNom(), c);
+		}
+		
 		//insert contrat
+		Contrat con = new Contrat(v,c,
+				dateFormat.format(datePriseEdit.getDate()),
+				Integer.parseInt(dureeEdit.getText()),
+				heurePriseEdit.getText(),
+				dateFormat.format(dateRemiseEdit.getDate()),
+				Integer.parseInt(garantieEdit.getText()));
+		DatabaseService.insertContrat(con);
+		
 		return;
 	}
 }

@@ -157,14 +157,19 @@ public class MainWindow {
 		btnAlertes.setBounds(0, 286, 150, 50);
 		buttonsPanel.add(btnAlertes);
 		
-		final ClientsPanel clientsPanel = new ClientsPanel();
-		
 		JButton btnClients = new JButton("CLIENTS");
 		btnClients.setFont(new Font("Tahoma", Font.PLAIN, 16));
 		btnClients.setBounds(0, 231, 150, 50);
 		btnClients.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				splitPane.setRightComponent(clientsPanel);
+				ClientsPanel clientsPanel;
+				try {
+					clientsPanel = new ClientsPanel();
+					splitPane.setRightComponent(clientsPanel);
+				} catch (ClassNotFoundException | SQLException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
 			}
 		});
 		buttonsPanel.add(btnClients);

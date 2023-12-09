@@ -290,7 +290,8 @@ public class DatabaseService {
 			    + "lieuNaissance = ?, "
 			    + "permis = ?, "
 			    + "datePermis = ?, "
-			    + "lieuPermis = ? "
+			    + "lieuPermis = ?,"
+			    + "passeport = ?"
 			    + "WHERE nom = ?";
 		PreparedStatement ps = connection.prepareStatement(query);
 		ps.setString(1, c.getNom());
@@ -301,7 +302,8 @@ public class DatabaseService {
 		ps.setString(6, c.getPermis());
 		ps.setString(7, c.getDatePermis());
 		ps.setString(8, c.getLieuPermis());
-		ps.setString(9, nom);
+		ps.setString(9, c.getPasseport());
+		ps.setString(10, nom);
 		
 		ps.execute();
 		connection.close();
