@@ -14,6 +14,8 @@ public class DatabaseService {
 	static Connection connection = null;
 
     private static void connectDB() throws SQLException, ClassNotFoundException{
+   
+    
             // Load the SQLite JDBC driver
             Class.forName("org.sqlite.JDBC");
 
@@ -58,7 +60,9 @@ public class DatabaseService {
 				+ "duree INTEGER,"
 				+ "heureRemise TEXT,"
 				+ "dateRemise TEXT,"
-				+ "garantie INTEGER)";
+				+ "garantie INTEGER,"
+				+ "FOREIGN KEY(voiture) REFERENCES voitures(id) ON UPDATE CASCADE,"
+				+ "FOREIGN KEY(client) REFERENCES clients(nom) ON UPDATE CASCADE)";
         ps = connection.prepareStatement(query);
         ps.execute();
         connection.close();
@@ -212,19 +216,23 @@ public class DatabaseService {
     	PreparedStatement ps = connection.prepareStatement(query);
     	ps.setString(1, id);
     	ResultSet rs = ps.executeQuery();
-    	rs.next();
-    	Voiture v = new Voiture (rs.getString("id"),
-				rs.getString("type"),
-				rs.getString("classe"),
-				rs.getString("numEnregistrement"),
-				rs.getInt("metrage"),
-				rs.getInt("prix"),
-				rs.getString("marque"),
-				rs.getString("immatriculation"),
-				rs.getInt("metragePrecis"),
-				rs.getString("etat"));
+    	ArrayList<Voiture> voitures = new ArrayList<Voiture>();
+    	while(rs.next()) {
+	    	Voiture v = new Voiture (rs.getString("id"),
+					rs.getString("type"),
+					rs.getString("classe"),
+					rs.getString("numEnregistrement"),
+					rs.getInt("metrage"),
+					rs.getInt("prix"),
+					rs.getString("marque"),
+					rs.getString("immatriculation"),
+					rs.getInt("metragePrecis"),
+					rs.getString("etat"));
+	   
+	    	voitures.add(v);
+    	}
     	connection.close();
-    	return v;
+    	return voitures.get(0);
     }
     
     public static void deleteVoiture(String id) throws ClassNotFoundException, SQLException {
@@ -276,8 +284,10 @@ public class DatabaseService {
 		ps.setString(10, v.getEtat());
 		ps.setString(11, id);
 		
-		ps.execute();
+		ps.executeUpdate();
 		connection.close();
+		
+		//db lock/ resultset closed issues
 	}
 
 	public static void updateClient(String nom, Client c) throws SQLException, ClassNotFoundException {
@@ -305,10 +315,33 @@ public class DatabaseService {
 		ps.setString(9, c.getPasseport());
 		ps.setString(10, nom);
 		
-		ps.execute();
+		ps.executeUpdate();
 		connection.close();
-		
 	}
+	
+	
+	public static ArrayList<Contrat> getContrat(String voiture, String client) throws ClassNotFoundException, SQLException{
+    	ArrayList<Contrat> contrats = new ArrayList<Contrat>();
+    	connectDB();
+    	String query = "SELECT * FROM contrats WHERE voiture = ? AND client = ? ORDER BY numContrat DESC";
+    	PreparedStatement ps = connection.prepareStatement(query);
+    	ps.setString(1, voiture);
+    	ps.setString(2, client);
+    	ResultSet rs = ps.executeQuery();
+    	while (rs.next()) {
+    		Contrat c = new Contrat (getVoiture(rs.getString("voiture")), 								
+    								getClient(rs.getString("client")),
+    								rs.getString("datePrise"),
+    								rs.getInt("duree"),
+    								rs.getString("heureRemise"),
+    								rs.getString("dateRemise"),
+    								rs.getInt("garantie"));
+    		c.setNumContrat(rs.getInt("numContrat"));
+    		contrats.add(c);
+    	}
+    	connection.close();
+    	return contrats;
+    }
 
 }
 	

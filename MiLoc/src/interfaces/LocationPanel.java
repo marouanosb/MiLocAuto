@@ -546,7 +546,7 @@ public class LocationPanel extends JPanel {
 	
 	private void imprimer() throws IOException, InvalidFormatException, ClassNotFoundException, SQLException {
 		
-		insertContrat();
+		String numContrat = Integer.toString(insertContrat());
 		
 		XWPFDocument doc = new XWPFDocument(OPCPackage.open("./src/milocsample.docx"));
 		for (XWPFParagraph p : doc.getParagraphs()) {
@@ -555,6 +555,7 @@ public class LocationPanel extends JPanel {
 		        for (XWPFRun r : runs) {
 		            String text = r.getText(0);
 		            if (text != null) {
+		            	text = text.replace("numContrat",numContrat);
 		            	text = text.replace("typeEdit", typeEdit.getText());
 			            text = text.replace("classeEdit", classeEdit.getText());
 			            text = text.replace("numEnregistrementEdit", numEnregistrementEdit.getText());
@@ -589,6 +590,7 @@ public class LocationPanel extends JPanel {
 		            for (XWPFRun r : p.getRuns()) {
 		              String text = r.getText(0);
 		              if (text != null) {
+		            	  text = text.replace("numContrat",numContrat);
 		            	  text = text.replace("typeEdit", typeEdit.getText());
 			              text = text.replace("classeEdit", classeEdit.getText());
 			              text = text.replace("numEnregistrementEdit", numEnregistrementEdit.getText());
@@ -707,7 +709,7 @@ public class LocationPanel extends JPanel {
 		passeportEdit.setText(c.getPasseport());
 	}
 	
-	private void insertContrat() throws ClassNotFoundException, SQLException {
+	private int insertContrat() throws ClassNotFoundException, SQLException {
 		//insert voiture if not exist else pdate
 		Voiture v = new Voiture(immatriculationEdit.getText(),
 				typeEdit.getText(),
@@ -753,6 +755,9 @@ public class LocationPanel extends JPanel {
 				Integer.parseInt(garantieEdit.getText()));
 		DatabaseService.insertContrat(con);
 		
-		return;
+		//extract contrat id to put it in doc file
+		Contrat contrat = (DatabaseService.getContrat(v.getId(), c.getNom())).get(0);
+
+		return contrat.getNumContrat();
 	}
 }

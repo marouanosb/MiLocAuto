@@ -10,6 +10,8 @@ import java.awt.image.BufferedImage;
 import java.awt.image.ImageObserver;
 import java.io.File;
 import java.io.IOException;
+import java.sql.SQLException;
+import java.util.ArrayList;
 
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
@@ -23,6 +25,8 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 
+import database.DatabaseService;
+
 import java.awt.Font;
 import javax.swing.JTable;
 import javax.swing.JTextField;
@@ -30,26 +34,27 @@ import javax.swing.ListSelectionModel;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import interfaces.RemiseContratWindow;
+import models.Contrat;
 
 public class RemisePanel extends JPanel {
 	private JTable contratTable;
 	private JTextField searchEdit;
 	private int selectedRow;
-	/**
-	 * Create the panel.
-	 */
 	
+	private ArrayList<Contrat> contrats;
 	
-	public RemisePanel(){
+	public RemisePanel() throws ClassNotFoundException, SQLException{
 		setLayout(null);
 		
 		JPanel panel = new JPanel();
 		panel.setBounds(0, 0, 768, 768);
 		add(panel);
 		panel.setLayout(null);
+		
+		contrats = getAllContrats();
 
 
-		String columns[]= {"CONTRAT N°","ِCLIENT","VOITURE", "DATE PRISE"};
+		String columns[]= {"CONTRAT N°","ِVOITURE","CLIENT", "DATE REMISE"};
 		DefaultTableModel dtm = new DefaultTableModel(0, 0);
 		dtm.setColumnIdentifiers(columns);
 		contratTable = new JTable();
@@ -71,6 +76,7 @@ public class RemisePanel extends JPanel {
 		});
 		contratTable.setDefaultEditor(Object.class, null);
         
+		showTable(contrats);
 		
 		searchEdit = new JTextField();
 		searchEdit.setText("Recherche...");
@@ -84,6 +90,27 @@ public class RemisePanel extends JPanel {
 		panel.add(btnNewButton);
 		
 	}
+	
+	private void showTable(ArrayList<Contrat> contrats) {
+		resetTable(contratTable);
+		for(Contrat c : contrats) {
+			String[] row = {Integer.toString(c.getNumContrat()),
+							c.getVoiture().getId(),
+							c.getClient().getNom(),
+							c.getDateRemise()};
+			((DefaultTableModel) contratTable.getModel()).addRow(row);
+		}
+	}
+	
+	private void resetTable(JTable table) {
+		((DefaultTableModel) table.getModel()).setRowCount(0);
+	}
+	
+	private ArrayList<Contrat> getAllContrats() throws ClassNotFoundException, SQLException{
+		
+		return DatabaseService.getAllContrats();
+	}
+	
 }
 
 

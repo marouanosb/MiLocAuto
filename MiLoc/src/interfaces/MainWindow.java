@@ -83,15 +83,21 @@ public class MainWindow {
 		splitPane.setLeftComponent(buttonsPanel);
 		buttonsPanel.setPreferredSize(new Dimension(150, 768));
 		
-		final LocationPanel locationPanel = new LocationPanel();
-		
+	
 		JButton btnLocation = new JButton("LOCATION");
 		btnLocation.setFont(new Font("Tahoma", Font.PLAIN, 16));
 		btnLocation.setLocation(0, 11);
 		btnLocation.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				locationPanel.setHeurePrise();
-				splitPane.setRightComponent(locationPanel);
+				LocationPanel locationPanel;
+				try {
+					locationPanel = new LocationPanel();
+					locationPanel.setHeurePrise();
+					splitPane.setRightComponent(locationPanel);
+				} catch (ClassNotFoundException | SQLException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
 			}
 		});
 		buttonsPanel.setLayout(null);
@@ -111,14 +117,20 @@ public class MainWindow {
 		btnReservation.setSize(150,50);
 		buttonsPanel.add(btnReservation);
 		
-		final RemisePanel remisePanel = new RemisePanel();
-		
 		JButton btnRemise = new JButton("REMISE");
 		btnRemise.setFont(new Font("Tahoma", Font.PLAIN, 16));
 		btnRemise.setLocation(0, 121);
 		btnRemise.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				splitPane.setRightComponent(remisePanel);
+				RemisePanel remisePanel;
+				try {
+					remisePanel = new RemisePanel();
+					splitPane.setRightComponent(remisePanel);
+				} catch (ClassNotFoundException | SQLException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+				
 			}
 		});
 		btnRemise.setSize(150,50);
