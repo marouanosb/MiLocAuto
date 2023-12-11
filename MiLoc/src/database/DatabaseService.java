@@ -13,16 +13,13 @@ import models.*;
 public class DatabaseService {
 	static Connection connection = null;
 
+	//FIX DB CLOSE/LOCK
+	
     private static void connectDB() throws SQLException, ClassNotFoundException{
-   
-    
             // Load the SQLite JDBC driver
             Class.forName("org.sqlite.JDBC");
-
             // Create a connection to the database
             connection = DriverManager.getConnection("jdbc:sqlite:database/bdd.db");
-            
-
     }
 
     public static void initialiseDB() throws SQLException, ClassNotFoundException {
@@ -320,7 +317,7 @@ public class DatabaseService {
 	}
 	
 	
-	public static ArrayList<Contrat> getContrat(String voiture, String client) throws ClassNotFoundException, SQLException{
+	public static Contrat getContrat(String voiture, String client) throws ClassNotFoundException, SQLException{
     	ArrayList<Contrat> contrats = new ArrayList<Contrat>();
     	connectDB();
     	String query = "SELECT * FROM contrats WHERE voiture = ? AND client = ? ORDER BY numContrat DESC";
@@ -340,7 +337,29 @@ public class DatabaseService {
     		contrats.add(c);
     	}
     	connection.close();
-    	return contrats;
+    	return contrats.get(0);
+    }
+	
+	public static Contrat getContratByNum(int numContrat) throws ClassNotFoundException, SQLException{
+    	ArrayList<Contrat> contrats = new ArrayList<Contrat>();
+    	connectDB();
+    	String query = "SELECT * FROM contrats WHERE numContrat = ?";
+    	PreparedStatement ps = connection.prepareStatement(query);
+    	ps.setInt(1, numContrat);
+    	ResultSet rs = ps.executeQuery();
+    	while (rs.next()) {
+    		Contrat c = new Contrat (getVoiture(rs.getString("voiture")), 								
+    								getClient(rs.getString("client")),
+    								rs.getString("datePrise"),
+    								rs.getInt("duree"),
+    								rs.getString("heureRemise"),
+    								rs.getString("dateRemise"),
+    								rs.getInt("garantie"));
+    		c.setNumContrat(rs.getInt("numContrat"));
+    		contrats.add(c);
+    	}
+    	connection.close();
+    	return contrats.get(0);
     }
 
 }

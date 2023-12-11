@@ -5,6 +5,11 @@ import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.sql.SQLException;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -13,8 +18,14 @@ import javax.swing.JMenu;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.border.EmptyBorder;
+
+import com.toedter.calendar.JDateChooser;
+
+import database.DatabaseService;
 import interfaces.LocationPanel;
+import models.Client;
 import models.Contrat;
+import models.Voiture;
 
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
@@ -34,16 +45,16 @@ public class RemiseContratWindow extends JFrame {
 	private JTextField garantieEdit;
 	private JTextField passeportEdit;
 	private JTextField nomEdit;
-	private JTextField dateNaissanceEdit;
+	private JDateChooser dateNaissanceEdit;
 	private JTextField adresseEdit;
 	private JTextField phoneEdit;
 	private JTextField lieuNaissanceEdit;
 	private JTextField permisEdit;
-	private JTextField datePriseEdit;
+	private JDateChooser datePriseEdit;
 	private JTextField dureeEdit;
-	private JTextField datePermisEdit;
+	private JDateChooser datePermisEdit;
 	private JTextField heurePriseEdit;
-	private JTextField dateRemiseEdit;
+	private JDateChooser dateRemiseEdit;
 	private JTextField lieuPermisEdit;
 	
 	private JPanel contentPane;
@@ -51,11 +62,14 @@ public class RemiseContratWindow extends JFrame {
 	private Contrat contrat;
 	private JTextField idVoitureEdit;
 	private JTextField metrageRetourEdit;
-	private JTextField dateRetourEdit;
+	private JDateChooser dateRetourEdit;
 	private JTextField heureRetourEdit;
 	private JTextField prixExtraEdit;
+	private JLabel numContratEdit;
+	
+	DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
 
-	public RemiseContratWindow() {
+	public RemiseContratWindow(int numContrat) throws ClassNotFoundException, SQLException, ParseException {
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setBounds(10, 10, 800, 953);
 		
@@ -66,11 +80,11 @@ public class RemiseContratWindow extends JFrame {
 		remiseContratPanel.setPreferredSize(getSize());
 		remiseContratPanel.setLayout(null);
 		
-		JLabel numLocLabel = new JLabel("عقد كراء رقم : XXXX");
-		numLocLabel.setBounds(0, 0, 748, 50);
-		remiseContratPanel.add(numLocLabel);
-		numLocLabel.setFont(new Font("Tahoma", Font.BOLD, 16));
-		numLocLabel.setHorizontalAlignment(SwingConstants.CENTER);
+		JLabel numContratLabel = new JLabel("عقد كراء رقم :");
+		numContratLabel.setBounds(125, 0, 550, 50);
+		remiseContratPanel.add(numContratLabel);
+		numContratLabel.setFont(new Font("Tahoma", Font.BOLD, 16));
+		numContratLabel.setHorizontalAlignment(SwingConstants.CENTER);
 		
 		JLabel idVoitureLabel = new JLabel("تعريف السيارة :");
 		idVoitureLabel.setBounds(596, 61, 150, 50);
@@ -271,8 +285,8 @@ public class RemiseContratWindow extends JFrame {
 		nomEdit.setBounds(415, 400, 208, 30);
 		remiseContratPanel.add(nomEdit);
 		
-		dateNaissanceEdit = new JTextField();
-		dateNaissanceEdit.setColumns(10);
+		dateNaissanceEdit = new JDateChooser();
+		dateNaissanceEdit.setDateFormatString("dd/MM/yyyy");
 		dateNaissanceEdit.setBounds(468, 441, 178, 30);
 		remiseContratPanel.add(dateNaissanceEdit);
 		
@@ -296,8 +310,8 @@ public class RemiseContratWindow extends JFrame {
 		permisEdit.setBounds(458, 564, 149, 30);
 		remiseContratPanel.add(permisEdit);
 		
-		datePriseEdit = new JTextField();
-		datePriseEdit.setColumns(10);
+		datePriseEdit = new JDateChooser();
+		datePriseEdit.setDateFormatString("dd/MM/yyyy");
 		datePriseEdit.setBounds(458, 605, 178, 30);
 		remiseContratPanel.add(datePriseEdit);
 		
@@ -306,8 +320,8 @@ public class RemiseContratWindow extends JFrame {
 		dureeEdit.setBounds(588, 646, 90, 30);
 		remiseContratPanel.add(dureeEdit);
 		
-		datePermisEdit = new JTextField();
-		datePermisEdit.setColumns(10);
+		datePermisEdit = new JDateChooser();
+		datePermisEdit.setDateFormatString("dd/MM/yyyy");
 		datePermisEdit.setBounds(230, 566, 128, 30);
 		remiseContratPanel.add(datePermisEdit);
 		
@@ -316,8 +330,8 @@ public class RemiseContratWindow extends JFrame {
 		heurePriseEdit.setBounds(230, 607, 128, 30);
 		remiseContratPanel.add(heurePriseEdit);
 		
-		dateRemiseEdit = new JTextField();
-		dateRemiseEdit.setColumns(10);
+		dateRemiseEdit = new JDateChooser();
+		dateRemiseEdit.setDateFormatString("dd/MM/yyyy");
 		dateRemiseEdit.setBounds(312, 648, 178, 30);
 		remiseContratPanel.add(dateRemiseEdit);
 		
@@ -361,8 +375,8 @@ public class RemiseContratWindow extends JFrame {
 		dateRetourLabel.setBounds(653, 770, 85, 30);
 		remiseContratPanel.add(dateRetourLabel);
 		
-		dateRetourEdit = new JTextField();
-		dateRetourEdit.setColumns(10);
+		dateRetourEdit = new JDateChooser();
+		dateRetourEdit.setDateFormatString("dd/MM/yyyy");
 		dateRetourEdit.setBounds(468, 770, 178, 30);
 		remiseContratPanel.add(dateRetourEdit);
 		
@@ -391,7 +405,63 @@ public class RemiseContratWindow extends JFrame {
 		JButton btnConfirmer = new JButton("CONFIRMER");
 		btnConfirmer.setBounds(353, 830, 100, 30);
 		remiseContratPanel.add(btnConfirmer);
+		
+		numContratEdit = new JLabel("XXXX");
+		numContratEdit.setHorizontalAlignment(SwingConstants.CENTER);
+		numContratEdit.setFont(new Font("Tahoma", Font.BOLD, 16));
+		numContratEdit.setBounds(264, 0, 110, 50);
+		remiseContratPanel.add(numContratEdit);
 		scrollPane.setBounds(10, 10, 768, 768);
 		setContentPane(scrollPane);
+		
+		
+		//show contrat
+		showContrat(getContrat(numContrat));
+	}
+	
+	private Contrat getContrat(int numContrat) throws ClassNotFoundException, SQLException {
+		Contrat con = DatabaseService.getContratByNum(numContrat);
+		
+		return con;
+	}
+	
+	private void showContrat(Contrat con) throws ParseException {
+		Voiture v = con.getVoiture();
+		Client c = con.getClient();
+		
+		//voiture
+		idVoitureEdit.setText(v.getId());
+		typeEdit.setText(v.getType());
+		classeEdit.setText(v.getClasse());
+		marqueEdit.setText(v.getMarque());
+		numEnregistrementEdit.setText(v.getNumEnregistrement());
+		immatriculationEdit.setText(v.getImmatriculation());
+		prixEdit.setText(Integer.toString(v.getPrix()));
+		metrageEdit.setText(Integer.toString(v.getMetrage()));
+		metragePrecisEdit.setText(Integer.toString(v.getMetragePrecis()));
+		
+		//client
+		Date dateNaissance = dateFormat.parse(c.getDateNaissance());
+		Date datePermis =  dateFormat.parse(c.getDatePermis());
+
+		nomEdit.setText(c.getNom());
+		dateNaissanceEdit.setDate(dateNaissance);
+		lieuNaissanceEdit.setText(c.getLieuNaissance());
+		phoneEdit.setText(c.getPhone());
+		permisEdit.setText(c.getPermis());
+		datePermisEdit.setDate(datePermis);
+		lieuPermisEdit.setText(c.getLieuPermis());
+		adresseEdit.setText(c.getAdresse());
+		passeportEdit.setText(c.getPasseport());
+		
+		//contrat
+		numContratEdit.setText(Integer.toString(con.getNumContrat()));
+		garantieEdit.setText(Integer.toString(con.getGarantie()));
+		dureeEdit.setText(Integer.toString(con.getDuree()));
+		Date datePrise = dateFormat.parse(con.getDatePrise());
+		Date dateRemise = dateFormat.parse(con.getDateRemise());
+		datePriseEdit.setDate(datePrise);
+		dateRemiseEdit.setDate(dateRemise);
+		
 	}
 }

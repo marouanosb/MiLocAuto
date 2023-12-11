@@ -11,6 +11,7 @@ import java.awt.image.ImageObserver;
 import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
+import java.text.ParseException;
 import java.util.ArrayList;
 
 import javax.imageio.ImageIO;
@@ -69,9 +70,14 @@ public class RemisePanel extends JPanel {
 		contratTable.addMouseListener(new java.awt.event.MouseAdapter() {
 		    @Override
 		    public void mouseClicked(java.awt.event.MouseEvent evt) {
-		        selectedRow = contratTable.rowAtPoint(evt.getPoint());
-		        System.out.println((String) contratTable.getValueAt(selectedRow,0));
-		        new RemiseContratWindow().setVisible(true);
+		        try {
+		        	selectedRow = contratTable.rowAtPoint(evt.getPoint());
+			        int selectedNumContrat = Integer.parseInt((String) contratTable.getValueAt(selectedRow,0));
+					new RemiseContratWindow(selectedNumContrat).setVisible(true);
+				} catch (ClassNotFoundException | SQLException | ParseException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 		    }
 		});
 		contratTable.setDefaultEditor(Object.class, null);

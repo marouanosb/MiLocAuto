@@ -756,7 +756,7 @@ public class LocationPanel extends JPanel {
 		DatabaseService.insertContrat(con);
 		
 		//extract contrat id to put it in doc file
-		Contrat contrat = (DatabaseService.getContrat(v.getId(), c.getNom())).get(0);
+		Contrat contrat = DatabaseService.getContrat(v.getId(), c.getNom());
 
 		return contrat.getNumContrat();
 	}
