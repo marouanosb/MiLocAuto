@@ -516,8 +516,6 @@ public class LocationPanel extends JPanel {
 		
 	}
 	
-	
-	
 	private boolean checkFields() {
 		if(typeEdit.getText().equals("") ||
 		classeEdit.getText().equals("") ||

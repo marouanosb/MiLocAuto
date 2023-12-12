@@ -435,6 +435,11 @@ public class RemiseContratWindow extends JFrame {
 		remiseContratPanel.add(prixExtraEdit);
 		
 		JButton btnConfirmer = new JButton("CONFIRMER");
+		btnConfirmer.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				confirmRemise();
+			}
+		});
 		btnConfirmer.setBounds(353, 830, 100, 30);
 		remiseContratPanel.add(btnConfirmer);
 		
@@ -593,15 +598,58 @@ public class RemiseContratWindow extends JFrame {
 			return;
 		}
 	
-	private void confirmRetour() {
+	private void confirmRemise() {
 		if(!checkFields()) {
-			int choice = JOptionPane.showConfirmDialog(
+			JOptionPane.showConfirmDialog(
 	                null,
 	                "Des champs nécessaires sont vides.",
 	                "Empty fields",
 	                JOptionPane.DEFAULT_OPTION);
 		} else {
 			//confirm remise
+			int metragePrecis = Integer.parseInt(metragePrecisEdit.getText());
+			int prix = Integer.parseInt(prixEdit.getText());
+			int metrageRetour = Integer.parseInt(metrageRetourEdit.getText());
+			int prixExtra = Integer.parseInt(prixExtraEdit.getText());
+			int garantie;
+			String garantieText = garantieEdit.getText();
+			if(garantieText.equals("")) garantie = 0;
+			else garantie = Integer.parseInt(garantieEdit.getText());
+			
+			int metrageFait = metrageRetour - Integer.parseInt(metrageEdit.getText());
+			
+			if(metrageFait < 0) {
+				JOptionPane.showConfirmDialog(
+		                null,
+		                "Le metrage de retour est inférieur au metrage initial.",
+		                "Erreur metrage",
+		                JOptionPane.DEFAULT_OPTION);
+			}
+			
+			int prixTotal = 0;
+			if(metrageFait <= metragePrecis) {
+				prixTotal += prix * metrageFait;
+			} else {
+				prixTotal += prix * metragePrecis;
+				prixTotal += prixExtra * (metrageFait - metragePrecis);
+			}
+			prixTotal -= garantie;
+			
+			String[] options = new String[2];
+			options[0] = "Confirmer";
+			options[1] = "Annuler";
+			//popup window to confirm
+			int choice = JOptionPane.showOptionDialog(
+	                null,
+	                "Prix total = "+prixTotal+" DA.\n"
+	                + "Confirmer la remise?",
+	                "Confirm remise",
+	                0, JOptionPane.INFORMATION_MESSAGE, null, options, null);
+			
+			if(choice == 0) {
+				System.out.println("confirmed");
+				//confirmation logic
+			}
 		}
 			
 		
