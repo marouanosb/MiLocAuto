@@ -5,19 +5,35 @@ import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
+import java.util.List;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.border.EmptyBorder;
+
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
+import org.apache.poi.openxml4j.opc.OPCPackage;
+import org.apache.poi.xwpf.usermodel.XWPFDocument;
+import org.apache.poi.xwpf.usermodel.XWPFParagraph;
+import org.apache.poi.xwpf.usermodel.XWPFRun;
+import org.apache.poi.xwpf.usermodel.XWPFTable;
+import org.apache.poi.xwpf.usermodel.XWPFTableCell;
+import org.apache.poi.xwpf.usermodel.XWPFTableRow;
 
 import com.toedter.calendar.JDateChooser;
 
@@ -31,6 +47,8 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.ScrollPaneConstants;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 
 public class RemiseContratWindow extends JFrame {
 
@@ -66,6 +84,7 @@ public class RemiseContratWindow extends JFrame {
 	private JTextField heureRetourEdit;
 	private JTextField prixExtraEdit;
 	private JLabel numContratEdit;
+	String numContrat;
 	
 	DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
 
@@ -340,7 +359,20 @@ public class RemiseContratWindow extends JFrame {
 		lieuPermisEdit.setBounds(21, 566, 160, 30);
 		remiseContratPanel.add(lieuPermisEdit);
 		
+		this.numContrat = Integer.toString(numContrat);
+		
 		JButton btnImprimer = new JButton("IMPRIMER");
+		btnImprimer.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				try {
+					imprimer();
+				} catch (InvalidFormatException | ClassNotFoundException | IOException | SQLException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+	
+			}
+		});
 		btnImprimer.setBounds(21, 16, 100, 30);
 		remiseContratPanel.add(btnImprimer);
 		
@@ -462,6 +494,148 @@ public class RemiseContratWindow extends JFrame {
 		Date dateRemise = dateFormat.parse(con.getDateRemise());
 		datePriseEdit.setDate(datePrise);
 		dateRemiseEdit.setDate(dateRemise);
+		heurePriseEdit.setText(con.getHeurePrise());
 		
+		//valeurs de retour
+		LocalDateTime now = LocalDateTime.now();
+		DateTimeFormatter dtfHour = DateTimeFormatter.ofPattern("HH:mm");
+		DateTimeFormatter dtfDate = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+		String currentDate = dtfDate.format(now);
+		String currentHour = dtfHour.format(now);
+		Date dateR = dateFormat.parse(currentDate);
+		heureRetourEdit.setText(currentHour);
+		dateRetourEdit.setDate(dateR);
+		
+	}
+	
+	private void imprimer() throws IOException, InvalidFormatException, ClassNotFoundException, SQLException {
+			
+			XWPFDocument doc = new XWPFDocument(OPCPackage.open("./src/milocsample.docx"));
+			for (XWPFParagraph p : doc.getParagraphs()) {
+			    List<XWPFRun> runs = p.getRuns();
+			    if (runs != null) {
+			        for (XWPFRun r : runs) {
+			            String text = r.getText(0);
+			            if (text != null) {
+			            	text = text.replace("numContrat",numContrat);
+			            	text = text.replace("typeEdit", typeEdit.getText());
+				            text = text.replace("classeEdit", classeEdit.getText());
+				            text = text.replace("numEnregistrementEdit", numEnregistrementEdit.getText());
+				            text = text.replace("metrageEdit", metrageEdit.getText());
+				            text = text.replace("prixEdit", prixEdit.getText());
+				            text = text.replace("marqueEdit", marqueEdit.getText());
+				            text = text.replace("immatriculationEdit", immatriculationEdit.getText());
+				            text = text.replace("metragePrecisEdit", metragePrecisEdit.getText());
+				            text = text.replace("garantieEdit", garantieEdit.getText());
+				            text = text.replace("passeportEdit", passeportEdit.getText());
+				            text = text.replace("nomEdit", nomEdit.getText());
+				            text = text.replace("dateNaissanceEdit", dateFormat.format(dateNaissanceEdit.getDate()));
+				            text = text.replace("lieuNaissanceEdit", lieuNaissanceEdit.getText());
+				            text = text.replace("phoneEdit", phoneEdit.getText());
+				            text = text.replace("adresseEdit", adresseEdit.getText());
+				            text = text.replace("dureeEdit", dureeEdit.getText());
+				            text = text.replace("permisEdit", permisEdit.getText());
+				            text = text.replace("datePermisEdit", dateFormat.format(datePermisEdit.getDate()));
+				            text = text.replace("datePriseEdit", dateFormat.format(datePriseEdit.getDate()));
+				            text = text.replace("heurePriseEdit", heurePriseEdit.getText());
+				            text = text.replace("dateRemiseEdit", dateFormat.format(dateRemiseEdit.getDate()));
+				            text = text.replace("lieuPermisEdit", lieuPermisEdit.getText());
+			                r.setText(text, 0);
+			            }
+			        }
+			    }
+			}
+			for (XWPFTable tbl : doc.getTables()) {
+			   for (XWPFTableRow row : tbl.getRows()) {
+			      for (XWPFTableCell cell : row.getTableCells()) {
+			         for (XWPFParagraph p : cell.getParagraphs()) {
+			            for (XWPFRun r : p.getRuns()) {
+			              String text = r.getText(0);
+			              if (text != null) {
+			            	  text = text.replace("numContrat",numContrat);
+			            	  text = text.replace("typeEdit", typeEdit.getText());
+				              text = text.replace("classeEdit", classeEdit.getText());
+				              text = text.replace("numEnregistrementEdit", numEnregistrementEdit.getText());
+				              text = text.replace("metrageEdit", metrageEdit.getText());
+				              text = text.replace("prixEdit", prixEdit.getText());
+				              text = text.replace("marqueEdit", marqueEdit.getText());
+				              text = text.replace("immatriculationEdit", immatriculationEdit.getText());
+				              text = text.replace("metragePrecisEdit", metragePrecisEdit.getText());
+				              text = text.replace("garantieEdit", garantieEdit.getText());
+				              text = text.replace("passeportEdit", passeportEdit.getText());
+				              text = text.replace("nomEdit", nomEdit.getText());
+				              text = text.replace("dateNaissanceEdit", dateFormat.format(dateNaissanceEdit.getDate()));
+				              text = text.replace("lieuNaissanceEdit", lieuNaissanceEdit.getText());
+				              text = text.replace("phoneEdit", phoneEdit.getText());
+				              text = text.replace("adresseEdit", adresseEdit.getText());
+				              text = text.replace("dureeEdit", dureeEdit.getText());
+				              text = text.replace("permisEdit", permisEdit.getText());
+				              text = text.replace("datePermisEdit", dateFormat.format(datePermisEdit.getDate()));
+				              text = text.replace("datePriseEdit", dateFormat.format(datePriseEdit.getDate()));
+				              text = text.replace("heurePriseEdit", heurePriseEdit.getText());
+				              text = text.replace("dateRemiseEdit", dateFormat.format(dateRemiseEdit.getDate()));
+				              text = text.replace("lieuPermisEdit", lieuPermisEdit.getText());
+				              r.setText(text, 0); 
+			              }
+			            }
+			         }
+			      }
+			   }
+			}
+			File outfile = new File("./src/output.docx");
+			outfile.getParentFile().mkdirs();
+			doc.write(new FileOutputStream(outfile));
+			
+			String outputPath = System.getProperty("user.dir")+"/src";
+			//gotoPATH
+			LocationPanel.gotoPath(outputPath);
+			
+			return;
+		}
+	
+	private void confirmRetour() {
+		if(!checkFields()) {
+			int choice = JOptionPane.showConfirmDialog(
+	                null,
+	                "Des champs nécessaires sont vides.",
+	                "Empty fields",
+	                JOptionPane.DEFAULT_OPTION);
+		} else {
+			//confirm remise
+		}
+			
+		
+	}
+	
+	private boolean checkFields() {
+		if(typeEdit.getText().equals("") ||
+		classeEdit.getText().equals("") ||
+		numEnregistrementEdit.getText().equals("") ||
+		metrageEdit.getText().equals("") ||
+		prixEdit.getText().equals("") ||
+		marqueEdit.getText().equals("") ||
+		immatriculationEdit.getText().equals("") ||
+		metragePrecisEdit.getText().equals("") ||
+		nomEdit.getText().equals("") ||
+		dateFormat.format(dateNaissanceEdit.getDate()).equals("") ||
+		adresseEdit.getText().equals("") ||
+		phoneEdit.getText().equals("") ||
+		lieuNaissanceEdit.getText().equals("") ||
+		permisEdit.getText().equals("") ||
+		dateFormat.format(datePriseEdit.getDate()).equals("") ||
+		dureeEdit.getText().equals("") ||
+		dateFormat.format(datePermisEdit.getDate()).equals("") ||
+		heurePriseEdit.getText().equals("") ||
+		dateFormat.format(dateRemiseEdit.getDate()).equals("") ||
+		lieuPermisEdit.getText().equals("") ||
+		metrageRetourEdit.getText().equals("") ||
+		prixExtraEdit.getText().equals("") ||
+		heureRetourEdit.getText().equals("") ||
+		dateFormat.format(dateRetourEdit.getDate()).equals("")) {
+			return false;
+		}
+			
+		
+		return true;
 	}
 }

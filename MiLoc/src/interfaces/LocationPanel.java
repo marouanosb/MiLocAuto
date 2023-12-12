@@ -93,6 +93,7 @@ public class LocationPanel extends JPanel {
 	Date dateP = null;
 	JComboBox idVoitureMenu;
 	
+	
 	private String type;
 	private String classe;
 	private String numEnregistrement;
@@ -113,7 +114,7 @@ public class LocationPanel extends JPanel {
 	private String heurePrise;
 	private String dateRemise;
 	private String lieuPermis;
-
+	private String numContrat;
 	ArrayList<Voiture> voitures = new ArrayList<Voiture>();
 	
 	
@@ -466,6 +467,7 @@ public class LocationPanel extends JPanel {
 				}
 				else {
 					try {
+						numContrat = Integer.toString(insertContrat());
 						imprimer();
 					} catch (InvalidFormatException | ClassNotFoundException | IOException | SQLException e1) {
 						// TODO Auto-generated catch block
@@ -545,8 +547,6 @@ public class LocationPanel extends JPanel {
 	}
 	
 	private void imprimer() throws IOException, InvalidFormatException, ClassNotFoundException, SQLException {
-		
-		String numContrat = Integer.toString(insertContrat());
 		
 		XWPFDocument doc = new XWPFDocument(OPCPackage.open("./src/milocsample.docx"));
 		for (XWPFParagraph p : doc.getParagraphs()) {
@@ -677,7 +677,7 @@ public class LocationPanel extends JPanel {
 	}
 	
 	//GO TO SPECIFIED PATH
-	public void gotoPath(String path) throws IOException {
+	public static void gotoPath(String path) throws IOException {
 		File file = new File(path);
 		if (!file.exists()) {
 			Files.createDirectories(Paths.get(path));
